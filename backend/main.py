@@ -1,20 +1,21 @@
 from flask import Flask, jsonify
 from computation import tfidf
 from google.cloud import storage
+from io import StringIO
 
 app = Flask(__name__)
 
 
 @app.route('/', methods=['GET', 'POST'])
 def query():
-    return jsonify({'result': [1, 2, 3]})
+    return jsonify(tfidf.query("compiler"))
 
 
 def setup_app():
     storage_client = storage.Client()
     bucket = storage_client.bucket('en-601-666.appspot.com')
-    blob = bucket.blob('tmp.csv')
-    tfidf.init(blob.download_as_string())
+    blob = bucket.blob('amazon_jobs_dataset.csv')
+    tfidf.init(StringIO(str(blob.download_as_string(),"utf-8")))
     print("finish read file")
 
 
