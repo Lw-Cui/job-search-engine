@@ -1,5 +1,5 @@
-# coding: utf-8
-from flask import Flask, jsonify, request
+# -*- coding: utf-8 -*-
+from flask import Flask, jsonify, request, make_response
 
 app = Flask(__name__)
 
@@ -12,7 +12,7 @@ def hello():
         dict(company="Google",
              title="engineer",
              category="engineering",
-             location="NY",
+             location="NY 淄博",
              description="The Amazon Devices team designs and engineers high-profile consumer electronics, "
                          "including the innovative Cloud Cam and Alexa family of products. We have also produced "
                          "groundbreaking devices such as Echo Show and the Echo Look to add Computer Vision to "
@@ -110,5 +110,6 @@ if __name__ == '__main__':
     # This is used when running locally only. When deploying to Google App
     # Engine, a webserver process such as Gunicorn will serve the app. This
     # can be configured by adding an `entrypoint` to app.yaml.
+    app.config['JSON_AS_ASCII'] = False
     app.run(host='127.0.0.1', port=8080, debug=True)
 # [END gae_python37_app]
