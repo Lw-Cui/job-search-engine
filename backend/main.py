@@ -12,10 +12,7 @@ def query():
 
 
 def setup_app():
-    storage_client = storage.Client()
-    bucket = storage_client.bucket('en-601-666.appspot.com')
-    blob = bucket.blob('amazon_jobs_dataset.csv')
-    tfidf.init(StringIO(str(blob.download_as_string(),"utf-8")))
+    tfidf.init('amazon_jobs_dataset.csv')
     print("finish read file")
 
 

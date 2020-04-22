@@ -10,7 +10,6 @@ from io import StringIO
 import numpy as np
 import nltk
 nltk.data.path.append("./nltk_data")
-print(nltk.data.path)
 
 from numpy.linalg import norm
 from nltk.stem.snowball import SnowballStemmer
