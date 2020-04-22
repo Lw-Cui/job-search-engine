@@ -1,0 +1,2 @@
+service: stub
+runtime: python37
