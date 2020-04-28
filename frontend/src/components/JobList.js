@@ -1,9 +1,9 @@
 import React from "react";
 import JobItem from "./JobItem";
 
-const JobList = ({ jobs, onJobSelect }) => {
+const JobList = ({ jobs, onJobSelect, selectedJob }) => {  
   const renderedList = jobs.map(job => (
-    <JobItem key={job.id} onJobSelect={onJobSelect} job={job} />
+    <JobItem key={job.id} onJobSelect={onJobSelect} job={job} selectedJob={selectedJob}/>
   ));
 
   return (
