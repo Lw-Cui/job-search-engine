@@ -1,6 +1,9 @@
 steps:
+- name: node
+  entrypoint: npm
+  args: ['install', '--prefix=frontend']
+- name: node
+  entrypoint: npm
+  args: ['run', 'build', '--prefix=frontend']
 - name: gcr.io/cloud-builders/gcloud
-  args:
-  - app
-  - deploy
-  - frontend/app.yaml
+  args: ['app', 'deploy', 'frontend/app.yaml']
