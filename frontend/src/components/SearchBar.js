@@ -1,25 +1,35 @@
 import React from "react";
 
 class SearchBar extends React.Component {
-  state = { term: "" };
+  state = { term: "", way: "BM25" };
 
   onFormSubmit = event => {
     event.preventDefault();
-    this.props.onFormSubmit(this.state.term);
+    this.props.onFormSubmit(this.state.term, this.state.way);
   };
 
   render() {
     return (
       <div className="ui segment">
         <form className="ui form" onSubmit={this.onFormSubmit}>
-          <div className="ui fluid icon input">
+          <div className="ui fluid action input left icon">
+            <i className="search icon"></i>
             <input
               type="text"
               placeholder="Search..."
               value={this.state.term}
               onChange={e => this.setState({ term: e.target.value })}
             />
-            <i className="search icon"></i>
+            <div>
+              <select
+                className="ui selection dropdown"
+                onChange={e => this.setState({ way: e.target.value })}
+              >
+                <option value="BM25">BM25</option>
+                <option value="TF-IDF">TF-IDF</option>
+                <option value="BERT">BERT</option>
+              </select>
+            </div>
           </div>
         </form>
       </div>

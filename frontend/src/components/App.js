@@ -9,16 +9,18 @@ class App extends React.Component {
 
   // https://stub-dot-en-601-666.ue.r.appspot.com/
   componentDidMount() {
-    this.onTermSubmit("")
+    this.onTermSubmit("");
   }
 
   onJobSelect = job => {
     this.setState({ selectedJob: job });
   };
 
-  onTermSubmit = async term => {
+  onTermSubmit = async (term, way) => {
+    // console.log(term);
+    // console.log(way);
     const response = await action.get("", {});
-    console.log(response)
+    // console.log(response);
     this.setState({
       jobs: response.data,
       selectedJob: response.data[0]
