@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from computation import tfidf, bm25f
+from computation import tfidf
 from google.cloud import storage
 from io import StringIO
 
@@ -8,15 +8,13 @@ app.config['JSON_AS_ASCII'] = False
 
 
 @app.route('/tfidf', methods=['GET', 'POST'])
-@app.route('/bm25', methods=['GET', 'POST'])
 def query():
     return jsonify(tfidf.query("compiler"))
 
 
 def setup_app():
     tfidf.init('amazon_jobs_dataset.csv')
-    bm25f.init('amazon_jobs_dataset.csv')
-    print("finish read file")
+    print("Finish read file")
 
 
 setup_app()
