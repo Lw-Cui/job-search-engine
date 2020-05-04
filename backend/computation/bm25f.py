@@ -406,6 +406,15 @@ def search_debug(doc_tf_vectors, avg_dl, doc_freqs, N, query):
     print('Query:', query)
     print()
     for doc_id, score in results_with_score[:10]:
-        output.append(docs[doc_id - 1])
+        doc = docs[doc_id - 1]
+        output.append({
+            'company': ' '.join(doc.company),
+            'title': ' '.join(doc.title),
+            'category': ' '.join(doc.category),
+            'location': ' '.join(doc.location),
+            'description': ' '.join(doc.description),
+            'minimum_qualifications': ' '.join(doc.mini_qual),
+            'preferred_qualifications': ' '.join(doc.pref_qual),
+        })
     return output
 
