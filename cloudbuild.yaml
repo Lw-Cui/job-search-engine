@@ -6,4 +6,4 @@ steps:
   entrypoint: npm
   args: ['run', 'build', '--prefix=frontend']
 - name: gcr.io/cloud-builders/gcloud
-  args: ['app', 'deploy', 'frontend/app.yaml']
+  args: ['app', 'deploy', 'backend/app.yaml', 'frontend/app.yaml']
