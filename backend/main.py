@@ -1,5 +1,5 @@
-from flask import Flask, jsonify
-from computation import tfidf
+from flask import Flask, jsonify, request
+from computation import tfidf, bm25f
 from google.cloud import storage
 from io import StringIO
 
@@ -7,14 +7,39 @@ app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
 
+@app.route('/bm25', methods=['GET', 'POST'])
+def bm25_query():
+    try:
+        json = request.get_json()
+        print(json)
+        return jsonify(bm25f.query(json.get('query')))
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal Error"}), 500
+
+
 @app.route('/tfidf', methods=['GET', 'POST'])
-def query():
+def tfidf_query():
+    try:
+        json = request.get_json()
+        print(json)
+        return jsonify(tfidf.query(json.get('query')))
+    except Exception as e:
+        print(e)
+        return jsonify({"error": "Internal Error"}), 500
+
+
+"""
+@app.route('/bert', methods=['GET', 'POST'])
+def bert_query():
     return jsonify(tfidf.query("compiler"))
+"""
 
 
 def setup_app():
     tfidf.init('amazon_jobs_dataset.csv')
-    print("Finish read file")
+    bm25f.init('amazon_jobs_dataset.csv')
+    print("finish read file")
 
 
 setup_app()
