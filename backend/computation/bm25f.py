@@ -101,30 +101,13 @@ class Document(NamedTuple):
 
 stemmer = SnowballStemmer('english')
 
-
-def read_rels(file):
-    '''
-    Reads the file of related documents and returns a dictionary of query id -> list of related documents
-    '''
-    rels = {}
-    with open(file) as f:
-        for line in f:
-            qid, rel = line.strip().split()
-            qid = int(qid)
-            rel = int(rel)
-            if qid not in rels:
-                rels[qid] = []
-            rels[qid].append(rel)
-    return rels
-
-
 def read_docs(file):
     '''
-    Reads the corpus into a list of Documents
-    '''
+        Reads the corpus into a list of Documents
+        '''
     docs = []  # empty 0 index
-
-    df = preprocess_data(file, tag='Amazon')
+    
+    df = pd.read_csv(file)
     return [Document(i + 1, row['Company'], row['Title'], row['Category'], row['Location'],
                      row['Responsibilities'], row['Minimum_Qualifications'], row['Preferred_Qualifications']) for i, row
             in df.iterrows()]
