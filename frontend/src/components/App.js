@@ -20,6 +20,9 @@ class App extends React.Component {
     // console.log(term);
     // console.log(way);
     const response = await action.get(way, {
+      headers: {
+        'Access-Control-Allow-Origin': '*'
+      },
       params: {
         query: term
       }
