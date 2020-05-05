@@ -25,9 +25,9 @@ class SearchBar extends React.Component {
                 className="ui selection dropdown"
                 onChange={e => this.setState({ way: e.target.value })}
               >
-                <option value="BM25">BM25</option>
-                <option value="TF-IDF">TF-IDF</option>
-                <option value="BERT">BERT</option>
+                <option value="bm25">BM25</option>
+                <option value="tfidf">TF-IDF</option>
+                <option value="bert">BERT</option>
               </select>
             </div>
           </div>
