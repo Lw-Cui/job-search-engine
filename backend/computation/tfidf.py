@@ -40,7 +40,7 @@ def init(dataset):
     processed_docs = process_docs(docs, True, False, stopwords)
     doc_freqs = compute_doc_freqs(processed_docs)
     doc_num = len(processed_docs)
-    doc_vectors = [term_funcs[term](doc, doc_freqs, TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1), doc_num) for doc in processed_docs]
+    doc_vectors = [compute_tfidf(doc, doc_freqs, TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1), doc_num) for doc in processed_docs]
 
 
 def query(intro: str):
