@@ -107,8 +107,11 @@ def read_glove_embeddings(file):
     global glove_embeds
     with open(file, 'r', encoding='utf—8') as f:
         for line in f.readlines():
-            line = list(line.split())
-            glove_embeds[line[0]] = np.array([float(num) for num in line[1:]])
+            try:
+                line = list(line.split())
+                glove_embeds[line[0]] = np.array([float(num) for num in line[1:]])
+            except:
+                continue
 
 def stem_doc(doc: Document, stem):
     new_doc = Document(doc.doc_id, [], [], [], [], [], [], [])
