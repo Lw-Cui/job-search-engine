@@ -19,11 +19,14 @@ from nltk.corpus import stopwords
 stop_words = set(stopwords.words('english'))
 
 docs = None
+original_docs = None
 
 
 def init(dataset):
     global docs
+    global original_docs
     docs = read_docs(dataset)
+    original_docs = docs
 
 
 def query(intro: str):
@@ -389,7 +392,7 @@ def search_debug(doc_tf_vectors, avg_dl, doc_freqs, N, query):
     print('Query:', query)
     print()
     for doc_id, score in results_with_score[:10]:
-        doc = docs[doc_id - 1]
+        doc = original_docs[doc_id - 1]
         output.append({
             'company': ' '.join(doc.company),
             'title': ' '.join(doc.title),
