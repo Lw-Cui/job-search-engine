@@ -1,3 +1,5 @@
+import traceback
+
 from flask import Flask, jsonify, request
 from computation import tfidf, bm25f
 from google.cloud import storage
@@ -7,25 +9,31 @@ app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
 
 
+def get_query():
+    if request.method == "POST":
+        json = request.get_json()
+        print(json)
+        return tfidf.query(json.get('query'))
+    else:
+        print(request.args.get("query"))
+        return tfidf.query(request.args.get("query"))
+
+
 @app.route('/bm25', methods=['GET', 'POST'])
 def bm25_query():
     try:
-        json = request.get_json()
-        print(json)
-        return jsonify(bm25f.query(json.get('query')))
+        return jsonify(bm25f.query(get_query()))
     except Exception as e:
-        print(e)
+        print(traceback.format_exc())
         return jsonify({"error": "Internal Error"}), 500
 
 
 @app.route('/tfidf', methods=['GET', 'POST'])
 def tfidf_query():
     try:
-        json = request.get_json()
-        print(json)
-        return jsonify(tfidf.query(json.get('query')))
-    except Exception as e:
-        print(e)
+        return jsonify(tfidf.query(get_query()))
+    except Exception:
+        print(traceback.format_exc())
         return jsonify({"error": "Internal Error"}), 500
 
 

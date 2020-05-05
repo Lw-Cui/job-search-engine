@@ -32,14 +32,14 @@ def query(intro: str):
         'tfidf': compute_tfidf
     # 'boolean': compute_boolean
     }
-    
+
     sim_funcs = {
         'cosine': cosine_sim
     # 'jaccard': jaccard_sim,
     # 'dice': dice_sim,
     # 'overlap': overlap_sim
     }
-    
+
     permutations = [
                     term_funcs,
                     [True],  # stem
@@ -55,7 +55,7 @@ def query(intro: str):
         doc_freqs = compute_doc_freqs(processed_docs)
         doc_num = len(processed_docs)
         doc_vectors = [term_funcs[term](doc, doc_freqs, term_weights, doc_num) for doc in processed_docs]
-        
+
         for query in processed_queries:
             query_vec = term_funcs[term](query, doc_freqs, term_weights, doc_num, query=True)
             results = search(doc_vectors, query_vec, sim_funcs[sim])
@@ -74,11 +74,11 @@ class Document(NamedTuple):
     description: List[str]
     mini_qual: List[str]
     pref_qual: List[str]
-    
+
     def sections(self):
         return [self.company, self.title, self.category, self.location, self.description, self.mini_qual,
                 self.pref_qual]
-    
+
     def __repr__(self):
         return (f"doc_id: {self.doc_id}\n" +
                 f"  company: {self.company}\n" +
@@ -97,7 +97,7 @@ def read_docs(file):
         Reads the corpus into a list of Documents
         '''
     docs = []  # empty 0 index
-    
+
     df = pd.read_csv(file)
     return [Document(i + 1, row['Company'], row['Title'], row['Category'], row['Location'],
                      row['Responsibilities'], row['Minimum_Qualifications'], row['Preferred_Qualifications']) for i, row
@@ -106,12 +106,12 @@ def read_docs(file):
 
 def stem_doc(doc: Document, stem):
     new_doc = Document(doc.doc_id, [], [], [], [], [], [], [])
-    
+
     if stem:
         new_doc = Document(doc.doc_id, *[[stemmer.stem(word) for word in sec] for sec in doc.sections()])
     else:
         new_doc = doc
-    
+
     return new_doc
 
 
@@ -161,7 +161,7 @@ def compute_tf(doc: Document, weights: list):
         vec[word] += weights.title
     for word in doc.category:
         vec[word] += weights.category
-    
+
     for word in doc.location:
         vec[word] += weights.location
     for word in doc.description:
@@ -170,7 +170,7 @@ def compute_tf(doc: Document, weights: list):
         vec[word] += weights.mini_qual
     for word in doc.pref_qual:
         vec[word] += weights.pref_qual
-    
+
     return dict(vec)  # convert back to a regular dict
 
 def compute_query_tf(doc):
@@ -184,9 +184,9 @@ def compute_tfidf(doc, doc_freqs, weights, N, query=False):
         vec_dict = compute_query_tf(doc)
     else:
         vec_dict = compute_tf(doc, weights)
-    
+
     tfidf_vec = {}
-    
+
     for word in vec_dict.keys():
         if word not in doc_freqs.keys():
             continue
@@ -198,7 +198,7 @@ def compute_tfidf(doc, doc_freqs, weights, N, query=False):
 def compute_boolean(doc, doc_freqs, weights, N=0):
     # TODO
     vec = defaultdict(float)
-    
+
     for word in doc.author:
         vec[word] = max(vec[word], weights.author)
     for word in doc.title:
@@ -207,7 +207,7 @@ def compute_boolean(doc, doc_freqs, weights, N=0):
         vec[word] = max(vec[word], weights.keyword)
     for word in doc.abstract:
         vec[word] = max(vec[word], weights.abstract)
-    
+
     return vec
 
 
@@ -262,14 +262,14 @@ def overlap_sim(x, y):
 def read_from_keyboard():
     flag = 'Yes'
     queries_text = []
-    
+
     while flag == 'Yes':
         flag = input('Do you want to continue inputting query: (Yes/No)')
         if flag == 'No':
             break
         query = input('Please put in your self-introduction: ')
         queries_text += [query]
-    
+
     return generate_queries(queries_text)
 
 
@@ -283,7 +283,7 @@ def generate_queries(queries_text):
     queries = []
     for query_text in queries_text:
         queries += [split_query_text(query_text)]
-    
+
     return queries
 
 def process_docs_and_queries(docs, queries, stem, removestop, stopwords):
@@ -297,15 +297,15 @@ def process_docs_and_queries(docs, queries, stem, removestop, stopwords):
     processed_docs = stem_docs(processed_docs, stem)
     processed_queries = [[stemmer.stem(word) for word in query] for query in processed_queries]
 
-return processed_docs, processed_queries
+    return processed_docs, processed_queries
 
 
 def search(doc_vectors, query_vec, sim):
     results_with_score = [(doc_id + 1, sim(query_vec, doc_vec))
                           for doc_id, doc_vec in enumerate(doc_vectors)]
-                          results_with_score = sorted(results_with_score, key=lambda x: -x[1])
-                          results = [x[0] for x in results_with_score]
-                          return results
+    results_with_score = sorted(results_with_score, key=lambda x: -x[1])
+    results = [x[0] for x in results_with_score]
+    return results
 
 
 def search_debug(_, query, doc_vectors, query_vec, sim):
@@ -313,7 +313,7 @@ def search_debug(_, query, doc_vectors, query_vec, sim):
                           for doc_id, doc_vec in enumerate(doc_vectors)]
     results_with_score = sorted(results_with_score, key=lambda x: -x[1])
     results = [x[0] for x in results_with_score]
-                          
+
     output = []
     print('Query:', query)
     print()
