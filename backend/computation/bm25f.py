@@ -11,6 +11,8 @@ import numpy as np
 import nltk
 nltk.data.path.append("./nltk_data")
 
+from ast import literal_eval
+
 from numpy.linalg import norm
 from nltk.stem.snowball import SnowballStemmer
 from nltk.tokenize import word_tokenize
@@ -20,58 +22,47 @@ stop_words = set(stopwords.words('english'))
 
 docs = None
 original_docs = None
+doc_freqs = None
+doc_num = 0
+doc_tf_vectors = None
+avg_dl = 0.0
 
 
 def init(dataset):
     global docs
     global original_docs
+    global doc_freqs
+    global doc_num
+    global doc_tf_vectors
+    global avg_dl
     docs = read_docs(dataset)
     original_docs = docs
 
+    processed_docs = process_docs(docs, True, False, stopwords)
+    doc_freqs = compute_doc_freqs(processed_docs)
+    doc_num = len(processed_docs)
+    doc_tf_vectors = [compute_tf(doc, doc_freqs, TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1), doc_num) for doc in processed_docs]
+
+    total_dl = 0.0
+    for doc_tf_vec in doc_tf_vectors:
+        total_dl += doc_tf_vec['_dl']
+
+    avg_dl = total_dl / doc_num
+
 
 def query(intro: str):
+    global docs
+    global original_docs
+    global doc_freqs
+    global doc_num
+    global doc_tf_vectors
+    global avg_dl
     query = [intro, "", "", "", "", "", "", "", ""]
     queries = generate_queries([query,])
-    term_funcs = {
-        # 'tf': compute_tf,
-        'tfidf': compute_tfidf
-        # 'boolean': compute_boolean
-    }
-
-    sim_funcs = {
-        'cosine': cosine_sim
-        # 'jaccard': jaccard_sim,
-        # 'dice': dice_sim,
-        # 'overlap': overlap_sim
-    }
-
-    permutations = [
-        term_funcs,
-        [True],  # stem
-        [True],  # remove stopwords
-        sim_funcs,
-        [TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1)]
-    ]
-
+    processed_queries = process_docs(docs, True, True, stopwords)
     results = []
-    # This loop goes through all permutations. You might want to test with specific permutations first
-    for term, stem, removestop, sim, term_weights in itertools.product(*permutations):
-
-        processed_docs, processed_queries = process_docs_and_queries(docs, queries, stem, removestop, stopwords)
-        doc_freqs = compute_doc_freqs(processed_docs)
-        doc_num = len(processed_docs)
-        doc_tf_vectors = [compute_tf(doc, doc_freqs, term_weights, doc_num) for doc in processed_docs]
-
-        total_dl = 0.0
-        for doc_tf_vec in doc_tf_vectors:
-            total_dl += doc_tf_vec['_dl']
-
-        avg_dl = total_dl / doc_num
-        
-        metrics = []
-
-        for query in processed_queries:
-            results = search_debug(doc_tf_vectors, avg_dl, doc_freqs, doc_num, query)
+    for query in processed_queries:
+        results = search_debug(doc_tf_vectors, avg_dl, doc_freqs, doc_num, query)
     return results
 
 
@@ -111,6 +102,8 @@ def read_docs(file):
     docs = []  # empty 0 index
     
     df = pd.read_csv(file)
+    for col in df.columns:
+        df[col] = df[col].apply(literal_eval)
     return [Document(i + 1, row['Company'], row['Title'], row['Category'], row['Location'],
                      row['Responsibilities'], row['Minimum_Qualifications'], row['Preferred_Qualifications']) for i, row
             in df.iterrows()]
@@ -286,29 +279,6 @@ def compute_bm25f_score_fulltext(doc_tf_vec, avg_dl, doc_freqs, N, query):
 def cosine_sim(x, y):
     return 0
 
-# TODO: put any extensions here
-def read_from_keyboard():
-    flag = 'Yes'
-    queries_text = []
-
-    while flag == 'Yes':
-        flag = input('Do you want to continue inputting query: (Yes/No)')
-        if flag == 'No':
-            break
-        query = [[], [], [], [], [], [], []]
-        query[0] = input('Company: ')
-        query[1] = input('Job Title: ')
-        query[2] = input('Job Category: ')
-        query[3] = input('Job Location: ')
-        query[4] = input('Job Description: ')
-        query[5] = input('Minimum Qualification: ')
-        query[6] = input('Preferred Qualification: ')
-
-        queries_text += [query]
-
-    return generate_queries(queries_text)
-
-
 def split_query_text(content):
     res = []
     for word in word_tokenize(content):
@@ -332,18 +302,16 @@ def generate_queries(queries_text):
     return queries
 
 
-def process_docs_and_queries(docs, queries, stem, removestop, stopwords):
+def process_docs(docs, stem, removestop, stopwords):
     processed_docs = docs
-    processed_queries = queries
     if removestop:
         processed_docs = remove_stopwords(processed_docs)
-    processed_queries = remove_stopwords(processed_queries)
 
     # TODO: Add stem parameter
-    processed_docs = stem_docs(processed_docs, stem)
-    processed_queries = stem_docs(processed_queries, stem)
+    if stem:
+        processed_docs = stem_docs(processed_docs, stem)
 
-    return processed_docs, processed_queries
+    return processed_docs
 
 def search_debug(doc_tf_vectors, avg_dl, doc_freqs, N, query):
     results_with_score = [(doc_id + 1, compute_bm25f_score_fulltext(doc_tf_vec, avg_dl, doc_freqs, N, query))
