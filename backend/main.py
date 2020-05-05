@@ -13,10 +13,10 @@ def get_query():
     if request.method == "POST":
         json = request.get_json()
         print(json)
-        return tfidf.query(json.get('query'))
+        return json.get('query')
     else:
         print(request.args.get("query"))
-        return tfidf.query(request.args.get("query"))
+        return request.args.get("query")
 
 
 @app.route('/bm25', methods=['GET', 'POST'])
