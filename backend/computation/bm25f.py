@@ -41,7 +41,7 @@ def init(dataset):
     processed_docs = process_docs(docs, True, False, stopwords)
     doc_freqs = compute_doc_freqs(processed_docs)
     doc_num = len(processed_docs)
-    doc_tf_vectors = [compute_tf(doc, doc_freqs, TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1), doc_num) for doc in processed_docs]
+    doc_tf_vectors = [compute_tf(doc, doc_freqs, TermWeights(company=1, title=4, category=4, location=1, description=2, mini_qual=2, pref_qual=2), doc_num) for doc in processed_docs]
 
     total_dl = 0.0
     for doc_tf_vec in doc_tf_vectors:
