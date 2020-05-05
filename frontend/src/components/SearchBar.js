@@ -14,12 +14,12 @@ class SearchBar extends React.Component {
         <form className="ui form" onSubmit={this.onFormSubmit}>
           <div className="ui fluid action input left icon">
             <i className="search icon"></i>
-            <input
+            <textarea
               type="text"
               placeholder="Search..."
-              value={this.state.term}
               onChange={e => this.setState({ term: e.target.value })}
-            />
+              rows="4"
+            >{this.state.term}</textarea>
             <div>
               <select
                 className="ui selection dropdown"
