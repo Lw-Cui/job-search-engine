@@ -11,28 +11,22 @@ const JobDetail = ({ job }) => {
       </div>
     );
   }
-  // const renderedRes = job.responsibilities.map(res => <li>{res}</li>);
-  // const renderedbQ = job.minimum_qualification.map(bq => <li>{bq}</li>);
-  // const renderedpQ = job.preferred_qualification.map(pq => <li>{pq}</li>);
 
   const renderedList = (
     <div>
       <div className="content">
-        <h4 className="ui header">What does success look like?</h4>
-        As a successful employee, you will:
+        <h4 className="ui header">Description</h4>
         <ul className="ui list">{job.description}</ul>
       </div>
       <br />
       <div className="content">
-        <h4 className="ui header">Basic Qualifications: </h4>
+        <h4 className="ui header">Minimum Qualifications: </h4>
         <ul className="ui list">{job.minimum_qualification}</ul>
       </div>
       <br />
       <div className="content">
         <h4 className="ui header">Preferred Qualifications: </h4>
-        Proficiency and interest in some of the below is highly beneficial for
-        this role, and we will teach you what you don't know:
-        <ul className="ui list">{job.minimum_qualification}</ul>
+        <ul className="ui list">{job.preferred_qualifications}</ul>
       </div>
     </div>
   );

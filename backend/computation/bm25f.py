@@ -115,43 +115,6 @@ def read_docs(file):
                      row['Responsibilities'], row['Minimum_Qualifications'], row['Preferred_Qualifications']) for i, row
             in df.iterrows()]
 
-
-def preprocess_data(file, tag):
-    if tag == 'Amazon':
-        df = pd.read_csv(file)
-        df.iloc[:, 0] = 'amazon'
-        df.drop(['Time'], axis=1, inplace=True)
-        df.insert(2, 'Category', df['Title'])
-
-    if tag == 'Google':
-        df = pd.read_csv(file)
-        df = df.rename(columns={'Minimum Qualifications': 'Minimum_Qualifications',
-                                'Preferred Qualifications': 'Preferred_Qualifications'})
-    df = df.dropna(how='any', axis='rows')
-    df['Company'] = df.Company.apply(lambda x: str(x).lower())
-    df['Company'] = df.Company.apply(lambda x: word_tokenize(x))
-
-    df['Title'] = df.Title.apply(lambda x: x.lower())
-    df['Title'] = df.Title.apply(lambda x: word_tokenize(x))
-    df['Category'] = df.Category.apply(lambda x: x.lower())
-    df['Category'] = df.Category.apply(lambda x: word_tokenize(x))
-    df['Location'] = df.Location.apply(lambda x: x.lower())
-    df['Location'] = df.Location.apply(lambda x: word_tokenize(x))
-
-    df['Responsibilities'] = df.Responsibilities.apply(lambda x: x.lower())
-    df['Responsibilities'] = df.Responsibilities.apply(lambda x: word_tokenize(x))
-    df['Responsibilities'] = df.Responsibilities.apply(lambda x: [w for w in x if w not in stop_words])
-
-    df['Minimum_Qualifications'] = df.Minimum_Qualifications.apply(lambda x: x.lower())
-    df['Minimum_Qualifications'] = df.Minimum_Qualifications.apply(lambda x: word_tokenize(x))
-    df['Minimum_Qualifications'] = df.Minimum_Qualifications.apply(lambda x: [w for w in x if w not in stop_words])
-
-    df['Preferred_Qualifications'] = df.Preferred_Qualifications.apply(lambda x: x.lower())
-    df['Preferred_Qualifications'] = df.Preferred_Qualifications.apply(lambda x: word_tokenize(x))
-    df['Preferred_Qualifications'] = df.Preferred_Qualifications.apply(lambda x: [w for w in x if w not in stop_words])
-
-    return df
-
 def stem_doc(doc: Document, stem):
     new_doc = Document(doc.doc_id, [], [], [], [], [], [], [])
 

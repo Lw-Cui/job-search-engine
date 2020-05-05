@@ -21,19 +21,9 @@ const JobItem = ({ job, selectedJob, onJobSelect }) => {
             <div className="content">{job.location}</div>
           </div>
           <div className="item">
-            <i className="dollar sign icon"></i>
-            <div className="content">$40.00-$70.00 /hour</div>
-          </div>
-          <div className="item">
             <i className="tag icon"></i>
             <div className="content">
               {job.category.charAt(0).toUpperCase() + job.category.slice(1)}
-            </div>
-          </div>
-          <div className="item">
-            <i className="linkify icon"></i>
-            <div className="content">
-              <a href="http://www.semantic-ui.com">abc.com</a>
             </div>
           </div>
         </ol>

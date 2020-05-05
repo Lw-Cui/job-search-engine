@@ -24,6 +24,7 @@ original_docs = None
 
 def init(dataset):
     global docs
+    global original_docs
     docs = read_docs(dataset)
     original_docs = docs
 
@@ -60,7 +61,7 @@ def query(intro: str):
 
         for query in processed_queries:
             query_vec = term_funcs[term](query, doc_freqs, term_weights, doc_num, query=True)
-            results = search(doc_vectors, query_vec, sim_funcs[sim])
+            #results = search(doc_vectors, query_vec, sim_funcs[sim])
             results = search_debug(processed_docs, query, doc_vectors, query_vec, sim_funcs[sim])
     return results
 
