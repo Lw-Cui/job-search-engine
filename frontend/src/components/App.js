@@ -19,7 +19,7 @@ class App extends React.Component {
   onTermSubmit = async (term, way) => {
     // console.log(term);
     // console.log(way);
-    const response = await action.get(term, {
+    const response = await action.get(way, {
       params: {
         query: term
       }
