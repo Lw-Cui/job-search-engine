@@ -11,6 +11,8 @@ import numpy as np
 import nltk
 nltk.data.path.append("./nltk_data")
 
+from ast import literal_eval
+
 from numpy.linalg import norm
 from nltk.stem.snowball import SnowballStemmer
 from nltk.tokenize import word_tokenize
@@ -100,6 +102,8 @@ def read_docs(file):
     docs = []  # empty 0 index
     
     df = pd.read_csv(file)
+    for col in df.columns:
+        df[col] = df[col].apply(literal_eval)
     return [Document(i + 1, row['Company'], row['Title'], row['Category'], row['Location'],
                      row['Responsibilities'], row['Minimum_Qualifications'], row['Preferred_Qualifications']) for i, row
             in df.iterrows()]
@@ -275,29 +279,6 @@ def compute_bm25f_score_fulltext(doc_tf_vec, avg_dl, doc_freqs, N, query):
 def cosine_sim(x, y):
     return 0
 
-# TODO: put any extensions here
-def read_from_keyboard():
-    flag = 'Yes'
-    queries_text = []
-
-    while flag == 'Yes':
-        flag = input('Do you want to continue inputting query: (Yes/No)')
-        if flag == 'No':
-            break
-        query = [[], [], [], [], [], [], []]
-        query[0] = input('Company: ')
-        query[1] = input('Job Title: ')
-        query[2] = input('Job Category: ')
-        query[3] = input('Job Location: ')
-        query[4] = input('Job Description: ')
-        query[5] = input('Minimum Qualification: ')
-        query[6] = input('Preferred Qualification: ')
-
-        queries_text += [query]
-
-    return generate_queries(queries_text)
-
-
 def split_query_text(content):
     res = []
     for word in word_tokenize(content):
@@ -327,7 +308,8 @@ def process_docs(docs, stem, removestop, stopwords):
         processed_docs = remove_stopwords(processed_docs)
 
     # TODO: Add stem parameter
-    processed_docs = stem_docs(processed_docs, stem)
+    if stem:
+        processed_docs = stem_docs(processed_docs, stem)
 
     return processed_docs
 

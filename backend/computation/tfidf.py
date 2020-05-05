@@ -4,6 +4,7 @@ import re
 import math
 import pandas as pd
 import argparse
+from ast import literal_eval
 from collections import Counter, defaultdict
 from typing import Dict, List, NamedTuple
 
@@ -94,6 +95,8 @@ def read_docs(file):
     docs = []  # empty 0 index
 
     df = pd.read_csv(file)
+    for col in df.columns:
+        df[col] = df[col].apply(literal_eval)
     return [Document(i + 1, row['Company'], row['Title'], row['Category'], row['Location'],
                      row['Responsibilities'], row['Minimum_Qualifications'], row['Preferred_Qualifications']) for i, row
             in df.iterrows()]
@@ -243,7 +246,6 @@ def jaccard_sim(x, y):
         return 1
     return num / denom
 
-
 def overlap_sim(x, y):
     # return 0  # TODO: implement
     num = dictdot(x, y)
@@ -252,21 +254,6 @@ def overlap_sim(x, y):
     return num / min(sum(x.values()), sum(y.values()))
 
 ### Extensions
-
-# TODO: put any extensions here
-def read_from_keyboard():
-    flag = 'Yes'
-    queries_text = []
-
-    while flag == 'Yes':
-        flag = input('Do you want to continue inputting query: (Yes/No)')
-        if flag == 'No':
-            break
-        query = input('Please put in your self-introduction: ')
-        queries_text += [query]
-
-    return generate_queries(queries_text)
-
 
 def split_query_text(content):
     res = []
@@ -287,7 +274,8 @@ def process_docs(docs, stem, removestop, stopwords):
         processed_docs = remove_stopwords(processed_docs)
         
     # TODO: Add stem parameter
-    processed_docs = stem_docs(processed_docs, stem)
+    if stem:
+        processed_docs = stem_docs(processed_docs, stem)
     
     return processed_docs
 
@@ -297,7 +285,8 @@ def process_queries(queries, stem, removestop, stopwords):
         processed_queries = [[word for word in query if word not in stop_words] for query in processed_queries]
 
     # TODO: Add stem parameter
-    processed_queries = [[stemmer.stem(word) for word in query] for query in processed_queries]
+    if stem:
+        processed_queries = [[stemmer.stem(word) for word in query] for query in processed_queries]
 
     return processed_queries
 
