@@ -101,7 +101,7 @@ def read_docs(file):
         Reads the corpus into a list of Documents
         '''
     docs = []  # empty 0 index
-
+    
     df = pd.read_csv(file)
     for col in df.columns:
         df[col] = df[col].apply(literal_eval)
