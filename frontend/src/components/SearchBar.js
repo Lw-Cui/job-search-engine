@@ -19,6 +19,7 @@ class SearchBar extends React.Component {
               placeholder="Search..."
               onChange={e => this.setState({ term: e.target.value })}
               rows="4"
+              style="padding: 1em 2.5em"
             >{this.state.term}</textarea>
             <div>
               <select
@@ -29,6 +30,7 @@ class SearchBar extends React.Component {
                 <option value="bm25">BM25</option>
                 <option value="bert">BERT</option>
               </select>
+              <button type="submit">search</button>
             </div>
           </div>
         </form>
