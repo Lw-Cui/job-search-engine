@@ -26,40 +26,25 @@ glove_embeds = {}
 def init(dataset):
     global docs
     global original_docs
+    global glove_embeds
     docs = read_docs(dataset)
     original_docs = docs
     read_glove_embeddings('./data/glove.6B.50d.txt')
-
+    print(glove_embeds['amazon'])
 
 def query(intro: str):
     queries = generate_queries([intro])
-    
-    sim_funcs = {
-        'cosine': cosine_sim
-    # 'jaccard': jaccard_sim,
-    # 'dice': dice_sim,
-    # 'overlap': overlap_sim
-    }
 
-    permutations = [
-                    [False],  # stem
-                    [True],  # remove stopwords
-                    sim_funcs,
-                    [TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1)]
-                    ]
 
-    results = []
-    # This loop goes through all permutations. You might want to test with specific permutations first
-    for stem, removestop, sim, term_weights in itertools.product(*permutations):
-        processed_docs, processed_queries = process_docs_and_queries(docs, queries, stem, removestop, stopwords)
-        doc_freqs = compute_doc_freqs(processed_docs)
-        doc_num = len(processed_docs)
-        doc_vectors = [generate_from_glove_doc(doc, doc_num, doc_freqs, term_weights) for doc in processed_docs]
-        
-        for query in processed_queries:
-            query_vec = generate_from_glove_query(query, doc_num, doc_freqs)
-            results = search(doc_vectors, query_vec, sim_funcs[sim])
-            results = search_debug(processed_docs, query, doc_vectors, query_vec, sim_funcs[sim])
+    processed_docs, processed_queries = process_docs_and_queries(docs, queries, False, True, stopwords)
+    doc_freqs = compute_doc_freqs(processed_docs)
+    doc_num = len(processed_docs)
+    term_weights = TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1)
+    doc_vectors = [generate_from_glove_doc(doc, doc_num, doc_freqs, term_weights) for doc in processed_docs]
+    results = [] 
+    for query in processed_queries:
+        query_vec = generate_from_glove_query(query, doc_num, doc_freqs)
+        results = search_debug(processed_docs, query, doc_vectors, query_vec, cosine_sim)
     return results
 
 
@@ -104,7 +89,6 @@ def read_docs(file):
                      row['Responsibilities'], row['Minimum_Qualifications'], row['Preferred_Qualifications']) for i, row in df.iterrows()]
 
 def read_glove_embeddings(file):
-    global glove_embeds
     with open(file, 'r', encoding='utf—8') as f:
         for line in f.readlines():
             try:
