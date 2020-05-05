@@ -1,12 +1,15 @@
 import traceback
 
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from computation import tfidf, bm25f
 from google.cloud import storage
 from io import StringIO
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
+
+CORS(app)
 
 
 def get_query():
