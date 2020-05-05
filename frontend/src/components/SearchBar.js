@@ -28,7 +28,7 @@ class SearchBar extends React.Component {
               >
                 <option value="tfidf">TF-IDF</option>
                 <option value="bm25">BM25</option>
-                <option value="bert">BERT</option>
+                <option value="glove">Glove</option>
               </select>
               <button type="submit">search</button>
             </div>

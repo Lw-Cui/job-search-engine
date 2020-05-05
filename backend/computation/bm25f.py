@@ -59,7 +59,7 @@ def query(intro: str):
     global avg_dl
     query = [intro, "", "", "", "", "", "", "", ""]
     queries = generate_queries([query,])
-    processed_queries = process_docs(docs, True, True, stopwords)
+    processed_queries = process_docs(queries, True, True, stopwords)
     results = []
     for query in processed_queries:
         results = search_debug(doc_tf_vectors, avg_dl, doc_freqs, doc_num, query)

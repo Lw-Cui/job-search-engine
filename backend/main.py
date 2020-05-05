@@ -2,7 +2,7 @@ import traceback
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from computation import tfidf, bm25f
+from computation import tfidf, bm25f, glove
 from google.cloud import storage
 from io import StringIO
 
@@ -39,17 +39,19 @@ def tfidf_query():
         print(traceback.format_exc())
         return jsonify({"error": "Internal Error"}), 500
 
-
-"""
-@app.route('/bert', methods=['GET', 'POST'])
-def bert_query():
-    return jsonify(tfidf.query("compiler"))
-"""
+@app.route('/glove', methods=['GET', 'POST'])
+def glove_query():
+    try:
+        return jsonify(glove.query(get_query()))
+    except Exception:
+        print(traceback.format_exc())
+        return jsonify({"error": "Internal Error"}), 500
 
 
 def setup_app():
     tfidf.init('data/data.csv')
     bm25f.init('data/data.csv')
+    glove.init('data/data.csv')
     print("finish read file")
 
 
