@@ -1,7 +1,7 @@
 import React from "react";
 
 class SearchBar extends React.Component {
-  state = { term: "", way: "tfidf" };
+  state = { term: "machine learning", way: "tfidf" };
 
   onFormSubmit = event => {
     event.preventDefault();
@@ -25,8 +25,8 @@ class SearchBar extends React.Component {
                 className="ui selection dropdown"
                 onChange={e => this.setState({ way: e.target.value })}
               >
-                <option value="bm25">BM25</option>
                 <option value="tfidf">TF-IDF</option>
+                <option value="bm25">BM25</option>
                 <option value="bert">BERT</option>
               </select>
             </div>
