@@ -20,10 +20,12 @@ from nltk.corpus import stopwords
 stop_words = set(stopwords.words('english'))
 
 docs = None
+original_docs = None
 
 def init(dataset):
     global docs
     docs = read_docs(dataset)
+    original_docs = docs
 
 def query(intro: str):
     queries = generate_queries([intro])
@@ -318,5 +320,14 @@ def search_debug(_, query, doc_vectors, query_vec, sim):
     print('Query:', query)
     print()
     for doc_id, score in results_with_score[:10]:
-        output.append(docs[doc_id - 1])
+        doc = original_docs[doc_id - 1]
+        output.append({
+            'company': ' '.join(doc.company),
+            'title': ' '.join(doc.title),
+            'category': ' '.join(doc.category),
+            'location': ' '.join(doc.location),
+            'description': ' '.join(doc.description),
+            'minimum_qualifications': ' '.join(doc.mini_qual),
+            'preferred_qualifications': ' '.join(doc.pref_qual),
+        })
     return output
