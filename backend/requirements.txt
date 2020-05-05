@@ -37,3 +37,4 @@ urllib3==1.25.9
 Werkzeug==1.0.1
 gunicorn
 flask-cors
+google-python-cloud-debugger

@@ -39,6 +39,7 @@ def tfidf_query():
         print(traceback.format_exc())
         return jsonify({"error": "Internal Error"}), 500
 
+
 @app.route('/glove', methods=['GET', 'POST'])
 def glove_query():
     try:
@@ -53,6 +54,11 @@ def setup_app():
     bm25f.init('data/data.csv')
     glove.init('data/data.csv')
     print("finish read file")
+    try:
+        import googleclouddebugger
+        googleclouddebugger.enable()
+    except ImportError:
+        pass
 
 
 setup_app()
