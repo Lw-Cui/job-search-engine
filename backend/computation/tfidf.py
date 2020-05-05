@@ -56,8 +56,6 @@ def query(intro: str):
         doc_num = len(processed_docs)
         doc_vectors = [term_funcs[term](doc, doc_freqs, term_weights, doc_num) for doc in processed_docs]
         
-        metrics = []
-        
         for query in processed_queries:
             query_vec = term_funcs[term](query, doc_freqs, term_weights, doc_num, query=True)
             results = search(doc_vectors, query_vec, sim_funcs[sim])
