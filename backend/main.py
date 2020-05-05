@@ -37,8 +37,8 @@ def bert_query():
 
 
 def setup_app():
-    tfidf.init('amazon_jobs_dataset.csv')
-    bm25f.init('amazon_jobs_dataset.csv')
+    tfidf.init('data/data.csv')
+    bm25f.init('data/data.csv')
     print("finish read file")
 
 
