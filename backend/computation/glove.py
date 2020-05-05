@@ -208,7 +208,7 @@ def generate_from_glove_query(query, doc_num, doc_freqs):
     vec = np.zeros(50)
     
     for word in query:
-        vec += glove_embeds.get(word, 0) * tf_idf[word]
+        vec += glove_embeds.get(word, 0) * tf_idf.get(word, 0)
     
     return vec / len(query)
 
