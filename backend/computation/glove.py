@@ -30,7 +30,6 @@ def init(dataset):
     docs = read_docs(dataset)
     original_docs = docs
     read_glove_embeddings('./data/glove.6B.50d.txt')
-    print(glove_embeds['amazon'])
 
 def query(intro: str):
     queries = generate_queries([intro])
@@ -41,7 +40,7 @@ def query(intro: str):
     doc_num = len(processed_docs)
     term_weights = TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1)
     doc_vectors = [generate_from_glove_doc(doc, doc_num, doc_freqs, term_weights) for doc in processed_docs]
-    results = [] 
+    results = []
     for query in processed_queries:
         query_vec = generate_from_glove_query(query, doc_num, doc_freqs)
         results = search_debug(processed_docs, query, doc_vectors, query_vec, cosine_sim)
