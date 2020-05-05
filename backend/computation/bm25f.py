@@ -20,58 +20,47 @@ stop_words = set(stopwords.words('english'))
 
 docs = None
 original_docs = None
+doc_freqs = None
+doc_num = 0
+doc_tf_vectors = None
+avg_dl = 0.0
 
 
 def init(dataset):
     global docs
     global original_docs
+    global doc_freqs
+    global doc_num
+    global doc_tf_vectors
+    global avg_dl
     docs = read_docs(dataset)
     original_docs = docs
 
+    processed_docs = process_docs(docs, True, False, stopwords)
+    doc_freqs = compute_doc_freqs(processed_docs)
+    doc_num = len(processed_docs)
+    doc_tf_vectors = [compute_tf(doc, doc_freqs, TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1), doc_num) for doc in processed_docs]
+
+    total_dl = 0.0
+    for doc_tf_vec in doc_tf_vectors:
+        total_dl += doc_tf_vec['_dl']
+
+    avg_dl = total_dl / doc_num
+
 
 def query(intro: str):
+    global docs
+    global original_docs
+    global doc_freqs
+    global doc_num
+    global doc_tf_vectors
+    global avg_dl
     query = [intro, "", "", "", "", "", "", "", ""]
     queries = generate_queries([query,])
-    term_funcs = {
-        # 'tf': compute_tf,
-        'tfidf': compute_tfidf
-        # 'boolean': compute_boolean
-    }
-
-    sim_funcs = {
-        'cosine': cosine_sim
-        # 'jaccard': jaccard_sim,
-        # 'dice': dice_sim,
-        # 'overlap': overlap_sim
-    }
-
-    permutations = [
-        term_funcs,
-        [True],  # stem
-        [True],  # remove stopwords
-        sim_funcs,
-        [TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1)]
-    ]
-
+    processed_queries = process_docs(docs, True, True, stopwords)
     results = []
-    # This loop goes through all permutations. You might want to test with specific permutations first
-    for term, stem, removestop, sim, term_weights in itertools.product(*permutations):
-
-        processed_docs, processed_queries = process_docs_and_queries(docs, queries, stem, removestop, stopwords)
-        doc_freqs = compute_doc_freqs(processed_docs)
-        doc_num = len(processed_docs)
-        doc_tf_vectors = [compute_tf(doc, doc_freqs, term_weights, doc_num) for doc in processed_docs]
-
-        total_dl = 0.0
-        for doc_tf_vec in doc_tf_vectors:
-            total_dl += doc_tf_vec['_dl']
-
-        avg_dl = total_dl / doc_num
-        
-        metrics = []
-
-        for query in processed_queries:
-            results = search_debug(doc_tf_vectors, avg_dl, doc_freqs, doc_num, query)
+    for query in processed_queries:
+        results = search_debug(doc_tf_vectors, avg_dl, doc_freqs, doc_num, query)
     return results
 
 
@@ -332,18 +321,15 @@ def generate_queries(queries_text):
     return queries
 
 
-def process_docs_and_queries(docs, queries, stem, removestop, stopwords):
+def process_docs(docs, stem, removestop, stopwords):
     processed_docs = docs
-    processed_queries = queries
     if removestop:
         processed_docs = remove_stopwords(processed_docs)
-    processed_queries = remove_stopwords(processed_queries)
 
     # TODO: Add stem parameter
     processed_docs = stem_docs(processed_docs, stem)
-    processed_queries = stem_docs(processed_queries, stem)
 
-    return processed_docs, processed_queries
+    return processed_docs
 
 def search_debug(doc_tf_vectors, avg_dl, doc_freqs, N, query):
     results_with_score = [(doc_id + 1, compute_bm25f_score_fulltext(doc_tf_vec, avg_dl, doc_freqs, N, query))

@@ -51,6 +51,7 @@ def query(intro: str):
     global doc_vectors
     queries = generate_queries([intro])
     processed_queries = process_queries(queries, True, True, stopwords)
+    results = []
     for query in processed_queries:
         query_vec = compute_tfidf(query, doc_freqs, TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1), doc_num, query=True)
         results = search_debug(processed_docs, query, doc_vectors, query_vec, cosine_sim)
