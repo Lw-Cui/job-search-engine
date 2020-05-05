@@ -20,9 +20,7 @@ class App extends React.Component {
     // console.log(term);
     // console.log(way);
     const response = await action.post(way, {
-      params: {
-        query: term
-      }
+      query: term
     });
     // console.log(response);
     this.setState({
