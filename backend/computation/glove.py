@@ -28,8 +28,7 @@ def init(dataset):
     global original_docs
     docs = read_docs(dataset)
     original_docs = docs
-    read_glove_embeddings('glove.6B.50d.txt')
-
+    read_glove_embeddings('./data/glove.6B.50d.txt')
 
 
 def query(intro: str):
