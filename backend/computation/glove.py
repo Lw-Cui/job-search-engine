@@ -22,24 +22,39 @@ stop_words = set(stopwords.words('english'))
 docs = None
 original_docs = None
 glove_embeds = {}
+processed_docs = None
+doc_freqs = None
+doc_num = 0
+doc_vectors = None
 
 def init(dataset):
     global docs
     global original_docs
     global glove_embeds
+    global processed_docs
+    global doc_freqs
+    global doc_num
+    global doc_vectors
     docs = read_docs(dataset)
     original_docs = docs
     read_glove_embeddings('./data/glove.6B.50d.txt')
-
-def query(intro: str):
-    queries = generate_queries([intro])
-
-
-    processed_docs, processed_queries = process_docs_and_queries(docs, queries, False, True, stopwords)
+    processed_docs = process_docs(docs, False, True, stopwords)
     doc_freqs = compute_doc_freqs(processed_docs)
     doc_num = len(processed_docs)
     term_weights = TermWeights(company=1, title=1, category=1, location=1, description=1, mini_qual=1, pref_qual=1)
     doc_vectors = [generate_from_glove_doc(doc, doc_num, doc_freqs, term_weights) for doc in processed_docs]
+
+def query(intro: str):
+    global docs
+    global original_docs
+    global glove_embeds
+    global processed_docs
+    global doc_freqs
+    global doc_num
+    global doc_vectors
+    queries = generate_queries([intro])
+
+    processed_queries = process_queries(queries, False, True, stopwords)
     results = []
     for query in processed_queries:
         query_vec = generate_from_glove_query(query, doc_num, doc_freqs)
@@ -218,17 +233,27 @@ def generate_queries(queries_text):
     
     return queries
 
-def process_docs_and_queries(docs, queries, stem, removestop, stopwords):
+def process_docs(docs, stem, removestop, stopwords):
     processed_docs = docs
+    if removestop:
+        processed_docs = remove_stopwords(processed_docs)
+        
+    # TODO: Add stem parameter
+    if stem:
+        processed_docs = stem_docs(processed_docs, stem)
     
+    return processed_docs
+
+def process_queries(queries, stem, removestop, stopwords):
     processed_queries = queries
     if removestop:
         processed_queries = [[word for word in query if word not in stop_words] for query in processed_queries]
-    if stem:
-        processed_docs = stem_docs(processed_docs, stem)
-        processed_queries = [[stemmer.stem(word) for word in query] for query in processed_queries]
-    return processed_docs, processed_queries
 
+    # TODO: Add stem parameter
+    if stem:
+        processed_queries = [[stemmer.stem(word) for word in query] for query in processed_queries]
+
+    return processed_queries
 
 def search(doc_vectors, query_vec, sim):
     results_with_score = [(doc_id + 1, sim(query_vec, doc_vec))

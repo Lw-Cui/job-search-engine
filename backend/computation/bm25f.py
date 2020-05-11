@@ -266,7 +266,7 @@ def compute_bm25f_score_fulltext(doc_tf_vec, avg_dl, doc_freqs, N, query):
     for sec in query.sections():
         for word in sec:
             if word in doc_tf_vec['_full'].keys():
-                query_vec[word] += doc_tf_vec['_full'][word]
+                query_vec[word] = doc_tf_vec['_full'][word]
     rsv = 0.0
     for word in query_vec.keys():
         if word in doc_freqs.keys():

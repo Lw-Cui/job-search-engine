@@ -30,7 +30,14 @@ class SearchBar extends React.Component {
                 <option value="bm25">BM25</option>
                 <option value="glove">Glove</option>
               </select>
-              <button type="submit">search</button>
+              <button
+                className="fluid ui primary basic right labeled icon button"
+                type="submit"
+                style={{ padding: "2em 2.5em" }}
+              >
+                <i class="right arrow icon"></i>
+                search
+              </button>
             </div>
           </div>
         </form>

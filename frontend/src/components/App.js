@@ -9,7 +9,7 @@ class App extends React.Component {
 
   // https://stub-dot-en-601-666.ue.r.appspot.com/
   componentDidMount() {
-    this.onTermSubmit("machine learning", "tfidf");
+    //this.onTermSubmit("machine learning", "tfidf");
   }
 
   onJobSelect = job => {

@@ -12,6 +12,11 @@ app.config['JSON_AS_ASCII'] = False
 CORS(app)
 
 
+@app.route('/_ah/warmup')
+def warmup():
+    return '', 200, {}
+
+
 def get_query():
     if request.method == "POST":
         json = request.get_json()

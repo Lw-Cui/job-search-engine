@@ -2,3 +2,7 @@ service: backend
 runtime: python37
 instance_class: F4_1G
 entrypoint: gunicorn -b :8080 -w 1 -t 600 main:app
+automatic_scaling:
+  min_instances: 1
+inbound_services:
+  - warmup

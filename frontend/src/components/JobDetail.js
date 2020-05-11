@@ -21,7 +21,7 @@ const JobDetail = ({ job }) => {
       <br />
       <div className="content">
         <h4 className="ui header">Minimum Qualifications: </h4>
-        <ul className="ui list">{job.minimum_qualification}</ul>
+        <ul className="ui list">{job.minimum_qualifications}</ul>
       </div>
       <br />
       <div className="content">
